@@ -7,7 +7,6 @@ export default async function handler(req, res) {
     console.log(req.body);
 
     try {
-      // Create Checkout Sessions from body params.
       const params = {
         submit_type: "pay",
         mode: "payment",
@@ -39,12 +38,14 @@ export default async function handler(req, res) {
             quantity: item.quantity,
           };
         }),
-        success_url: `${req.headers.origin}/?success=true`,
-        cancel_url: `${req.headers.origin}/?canceled=true`,
+        success_url: `${req.headers.origin}/success`,
+        cancel_url: `${req.headers.origin}/canceled`,
       };
+
       // Create Checkout Sessions from body params.
       const session = await stripe.checkout.sessions.create(params);
-      res.redirect(303, session.url);
+
+      res.status(200).json(session);
     } catch (err) {
       console.log("status code: ", err.statusCode);
       console.log("HELOOOOOO");
